@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="../vue.js"></script>
+    <script src="../vue-router.js"></script>
+    <link rel="stylesheet" href="../bootstrap.css">
+</head>
+
+<body>
+    <div id="app">
+        <div class="container">
+            <div class="card">
+                <div class="card-header bg-light text-center">
+                    <span>评论区</span>
+                </div>
+                <div class="card-body form-group">
+                    <label for="name" class="form-inline">
+                        <span class="col-2 text-right">评论人:</span>
+                        <input type="text" name="" id="" class="col-8 border-dark form-control" v-model="name">
+                    </label>
+                    <label for="content" class="form-inline">
+                        <span class="col-2 text-right">评论：</span>
+                        <textarea name="" id="content" cols="30" rows="3" class="col-8 border-dark form-control"
+                            v-model="content"></textarea>
+                    </label>
+                    <input type="button" value="提交" class="btn btn-light btn-outline-dark col-4 offset-4"
+                        @click="postContent">
+                </div>
+                <div class="card-footer">
+                    <ul class="list-group">
+                        <li class="list-group-item" v-for="(item,index) in list" :key="item.id">
+                            <span class="badge badge-dark">评论人:{{item.name}}</span>
+                            {{item.content}}
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var vm = new Vue({
+            el: "#app",
+            data: {
+                list: [{
+                    id: 54564,
+                    name: 'sbja',
+                    content: 'dsfhihfowhfwe'
+                }, {
+                    id: 13545,
+                    name: "dhsv",
+                    content: 'sdfgiuh'
+                }],
+                name: '',
+                content: ''
+            },
+            methods: {
+                postContent() {
+                    //加载loacalstorage的数据
+                    var dataList = JSON.parse(localStorage.getItem('cots') || '[]');
+                    console.log(dataList);
+                    var newObj = {
+                        id: '',
+                        name: this.name,
+                        content: this.content
+                    };
+                    newObj.id = (function chkId() {
+                        var newId = Math.floor(Math.random() * Math.pow(10, 5));
+                        if (dataList.some((item, index, arrar) => {
+                                return (item.id == newId);
+                            })) {
+                            arguments.callee();
+                        } else {
+                            return newId;
+                        }
+                    })();
+                    //将新数据添加到localstorage中
+                    dataList.push(newObj);
+                    localStorage.setItem('cots', JSON.stringify(dataList));
+                    //将data的list与本地数据保持一致
+                    this.list = dataList;
+                    this.name = this.content = '';
+                },
+                loadContent() {
+                    this.list = JSON.parse(localStorage.getItem('cots') || '[]');
+                }
+            },
+            created() {
+                this.loadContent();
+            },
+            filters: {},
+            directives: {},
+            components: {},
+            watch: {},
+            computed: {}
+        });
+    </script>
+</body>
+
+</html>
